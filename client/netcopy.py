@@ -16,6 +16,14 @@ def copy(working_dir: str,
          no_copy: bool,
          no_print: bool,
          clip_name: str):
+    """Reads a saved clip and writes it to the specified output sources (stdout and/or the clipboard).
+
+    Currently, a limitation exists that prevents both writing output and saving to the clipboard when the output is
+    piped to another command. It will cause the program to hang indefinitely. This is because setting the clipboard
+    itself uses piping to a subprocess, and these operations conflict.
+
+    When piping the output to another command, use the --no-copy option to suppress updating the clipboard.
+    """
 
     netclip.copy(working_dir=working_dir,
                  no_copy=no_copy,

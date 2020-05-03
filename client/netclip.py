@@ -13,6 +13,22 @@ DEFAULT_CLIP_NAME = '.default'
 @click.group(cls=DefaultGroup, default='clip', default_if_no_args=True)
 @click.pass_context
 def execute(ctx):
+    """Netclip is (or, will be) a utility for working with multiple saved copy/paste items, or "clips", over a network
+    to be used with multiple devices and/or users. Its intent is to be command-line friendly first.
+
+    Currently, it functions as a local clipboard utility, saving named clips and accessing them. It can be considered
+    a convenience wrapper of more verbose clipboard tools like xclip.
+
+    This program, netclip, is the entrypoint for all client-operations, namely clipping, copying, and working with
+    saved clips. It contains subcommands for each of these operations. The default subcommand, if none is specified,
+    is "clip". For convenience, additional python files exist to bypass the more verbose subcommand syntax.
+
+    Use 'netclip COMMAND --help' to see descriptions of each subcommand.
+
+    Clips are stored in a local working directory defaulting to ~/.netclip. All commands can take the name of a clip as
+    the argument. A default clip, '.default', will be used whenever the clip name is omitted. The default clip is meant
+    to be used for temporary items that do not need to be saved.
+    """
     pass
 
 
@@ -32,6 +48,7 @@ def clip(use_clipboard: bool,
          no_overwrite: bool,
          working_dir: str,
          clip_name: str):
+    """Creates or updates a saved clip from the specified input source (stdin, or the current clipboard contents)."""
 
     if not working_dir:
         working_dir = os.path.join(str(Path.home()), '.netclip')
@@ -75,6 +92,14 @@ def copy(working_dir: str,
          no_copy: bool,
          no_print: bool,
          clip_name: str):
+    """Reads a saved clip and writes it to the specified output sources (stdout and/or the clipboard).
+
+    Currently, a limitation exists that prevents both writing output and saving to the clipboard when the output is
+    piped to another command. It will cause the program to hang indefinitely. This is because setting the clipboard
+    itself uses piping to a subprocess, and these operations conflict.
+
+    When piping the output to another command, use the --no-copy option to suppress updating the clipboard.
+    """
 
     if not working_dir:
         working_dir = os.path.join(str(Path.home()), '.netclip')
